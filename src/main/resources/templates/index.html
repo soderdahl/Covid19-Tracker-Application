@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <title>Covid19 Application</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1>Covid19 Tracker Records</h1>
+    <p>This application list the current number of confirmed cases, death and recovered reported across the globe </p>
+
+    <div class="jumbotron">
+        <h2 class="display-4" th:text="${totalConfirmedCases}"></h2>
+        <p class="lead">Total cases reported as of today</p>
+        <hr class="my-4">
+
+        <h2 class="display-4" th:text="${totalDeath}"></h2>
+        <p class="lead">Total death reported as of today</p>
+        <hr class="my-4">
+
+        <h2 class="display-4" th:text="${totalRecover}"></h2>
+        <p class="lead">Total recovered reported as of today</p>
+        <hr class="my-4">
+
+    </div>
+<table class="table table-bordered">
+    <thead class="thead-light">
+    <tr>
+        <th>Country</th>
+        <th>Total cases</th>
+        <th>New cases</th>
+        <th>Deaths Records</th>
+        <th>New Deaths</th>
+        <th>Recovered</th>
+    </tr>
+    </thead>
+    <tr th:each="d : ${data}">
+        <td th:text="${d.getKey()}"></td>
+        <td th:text="${d.getValue().getConfirmedCases()}"></td>
+        <td style="color:#FF4500" th:text= "'+'+${d.getValue().getNewCases()}"></td>
+        <td th:text="${d.getValue().getDeathsRecorded()}"></td>
+        <td style="color:#FF4500" th:text="'+'+${d.getValue().getNewDeath()}"></td>
+        <td th:text="${d.getValue().getRecovered()}"></td>
+    </tr>
+</table>
+    <div class="card-footer text-muted">
+        <p>Developed by</p>
+        <p>Erik Malm & Nutcha Söderdahl</p>
+    </div>
+</div>
+
+</body>
+</html>
