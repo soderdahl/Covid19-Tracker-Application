@@ -4,8 +4,7 @@ import java.text.DecimalFormat;
 
 public class NutchasLine {
 
-    public NutchasLine(String city, String country,  int confirmedCases, int deathsRecorded){
-        this.city = city;
+    public NutchasLine( String country,  int confirmedCases, int deathsRecorded){
         this.country = country;
         this.confirmedCases = confirmedCases;
         this.deathsRecorded = deathsRecorded;
@@ -15,7 +14,6 @@ public class NutchasLine {
     }
 
     private String country;
-    private String city;
     private int confirmedCases;
     private int deathsRecorded;
     private int recovered;
@@ -54,13 +52,6 @@ public class NutchasLine {
         this.country = country;
     }
 
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
 
     public int getConfirmedCases() {
         return confirmedCases;
@@ -76,9 +67,6 @@ public class NutchasLine {
 
     public void setDeathsRecorded(int deathsRecorded) {
         this.deathsRecorded = deathsRecorded;
-    }
-    public String toTableLine(){
-        return String.format("<tr><th>%s</th><th>%s</th><th>%d</th><th>%d</th></tr>",getCountry(),getCity(),getConfirmedCases(),getDeathsRecorded());
     }
 
 

@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -44,16 +42,27 @@ public class CsvCombinerService {
         TreeMap<String, NutchasLine> countryProvinceLineMap = new TreeMap<>();
 
         deathParser.getRecords().stream()
-                .map( line ->{NutchasLine nutchasLine = new NutchasLine(line.get(0), line.get(1), 0, Integer.parseInt(line.get(line.size()-1)));
+                .map(line -> {
+                    NutchasLine nutchasLine = new NutchasLine(line.get(1), 0, Integer.parseInt(line.get(line.size() - 1)));
                     int latestDeaths = Integer.parseInt(line.get(line.size() - 1));
                     int prevDayDeaths = Integer.parseInt(line.get(line.size() - 2));
                     nutchasLine.setNewDeath(
-                            latestDeaths- prevDayDeaths
+                            latestDeaths - prevDayDeaths
                     );
-                return nutchasLine;
+                    return nutchasLine;
                 })
-                .forEach(nutchasLine ->
-                        countryProvinceLineMap.put(nutchasLine.getCity()+nutchasLine.getCountry(), nutchasLine));
+                .forEach(nutchasLine -> {
+
+                    NutchasLine mapLine =  countryProvinceLineMap.get(nutchasLine.getCountry());
+                    if (mapLine == null) {
+                        countryProvinceLineMap.put(nutchasLine.getCountry(), nutchasLine);
+                    }else{
+                      sumLine(mapLine, nutchasLine);
+                    }
+
+
+                });
+
 
 
 
@@ -64,8 +73,8 @@ public class CsvCombinerService {
                 .getRecords()
                 .stream()
                 .forEach(line -> {
-                    String key = line.get(0)+line.get(1);
-                    NutchasLine nutchasLine = countryProvinceLineMap.get(key);
+                    String key = line.get(1);
+                    NutchasLine nutchasLine = new NutchasLine(key, 0, 0);
                     nutchasLine.setConfirmedCases(
                             Integer.parseInt(line.get(line.size()-1))
                     );
@@ -74,7 +83,14 @@ public class CsvCombinerService {
                     nutchasLine.setNewCases(
                     latestCases- prevDayCases
                     );
+                    NutchasLine mapLine = countryProvinceLineMap.get(key);
+                    if (mapLine == null) {
+                        countryProvinceLineMap.put(nutchasLine.getCountry(), nutchasLine);
+                    }else{
+                        sumLine(mapLine, nutchasLine);
+                    }
                 });
+
 
 
 
@@ -85,29 +101,32 @@ public class CsvCombinerService {
                 .getRecords()
                 .stream()
                 .forEach(line -> {
-                    String key = line.get(0)+line.get(1);
-                    NutchasLine nutchasLine = countryProvinceLineMap.get(key);
-                   if(nutchasLine == null){
-                       nutchasLine = new NutchasLine();
-                       countryProvinceLineMap.put(key,nutchasLine);
-                   }
+                    String key = line.get(1);
+                    NutchasLine nutchasLine = new NutchasLine(key, 0, 0);
                     nutchasLine.setRecovered(
                             Integer.parseInt(line.get(line.size()-1))
                     );
+                    NutchasLine mapLine = countryProvinceLineMap.get(key);
+                    if (mapLine == null) {
+                        countryProvinceLineMap.put(nutchasLine.getCountry(), nutchasLine);
+                    }else{
+                        sumLine(mapLine, nutchasLine);
+                    }
                 });
 
-
-        /**
-         * int latestCases = Integer.parseInt(record.get(record.size() - 1));
-         *             int prevDayCases = Integer.parseInt(record.get(record.size() - 2));
-         *             locationStats.setLatestTotalCases(latestCases);
-         *             locationStats.setDiffFromPrevDay(latestCases - prevDayCases);
-         */
         // String table = countryProvinceLineMap.values().stream().map(line -> line.toTableLine()).collect(Collectors.joining());
        // return "<table>"+table+"</table>";
     lastUpdate = LocalDate.now();
     cachedMap = countryProvinceLineMap;
         return countryProvinceLineMap;
+    }
+
+    private void sumLine(NutchasLine mapLine, NutchasLine nutchasLine) {
+        mapLine.setNewCases(mapLine.getNewCases()+nutchasLine.getNewCases());
+        mapLine.setDeathsRecorded(mapLine.getDeathsRecorded()+nutchasLine.getDeathsRecorded());
+        mapLine.setNewDeath(mapLine.getNewDeath()+nutchasLine.getNewDeath());
+        mapLine.setConfirmedCases(mapLine.getConfirmedCases()+nutchasLine.getConfirmedCases());
+        mapLine.setRecovered(mapLine.getRecovered()+nutchasLine.getRecovered());
     }
 
 }
