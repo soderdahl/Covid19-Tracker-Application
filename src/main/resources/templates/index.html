@@ -5,7 +5,9 @@
     <title>Covid19 Application</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
 </head>
+
 <body>
 <div class="container">
     <h1>Covid19 Tracker Records</h1>
@@ -25,15 +27,15 @@
         <hr class="my-4">
 
     </div>
-<table class="table table-bordered">
+<table id="myTable" class="table table-bordered">
     <thead class="thead-light">
     <tr>
         <th>Country</th>
-        <th>Total cases</th>
-        <th>New cases (24h)</th>
-        <th>Deaths Records</th>
-        <th>New Deaths (24h)</th>
-        <th>Recovered</th>
+        <th onclick="sortTable(1)">Total cases</th>
+        <th onclick="sortTable(2)">New cases (24h)</th>
+        <th onclick="sortTable(3)">Deaths Records</th>
+        <th onclick="sortTable(4)">New Deaths (24h)</th>
+        <th onclick="sortTable(5)">Recovered</th>
     </tr>
     </thead>
     <tr th:each="d : ${data}">
@@ -51,5 +53,44 @@
     </div>
 </div>
 
+<script >function sortTable(n) {
+    let table = document.getElementById('myTable');
+   let tableBody = table.getElementsByTagName('tbody')[0];
+   let sortDirection = false;
+   sortDirection = !sortDirection;
+    let rows = tableBody.rows;
+    let sortArray = [];
+
+    for (let i = 0; i < rows.length; i++) {
+        let cell = rows[i].getElementsByTagName('td')[n];
+
+        sortArray.push({
+           value: cell.innerHTML,
+           row : rows[i]
+        })
+    }
+
+        sortColumnOfNumber(sortDirection, sortArray);
+
+      function sortColumnOfNumber(sort, sortArray) {
+        sortArray.sort((a1, a2) => {
+            return sort ? a2.value - a1.value : a1.value - a2.value;
+        }
+        )
+        reloadTable(sortArray)
+      }
+
+      function reloadTable(sortArray) {
+        tableBody.innerHTML = "";
+
+        for (let i=0; i < sortArray.length; i++) {
+             tableBody.appendChild(sortArray[i].row)
+        }
+
+      }
+      }
+
+
+</script>
 </body>
 </html>

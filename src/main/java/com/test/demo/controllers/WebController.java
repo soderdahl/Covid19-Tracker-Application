@@ -3,10 +3,12 @@ package com.test.demo.controllers;
 import com.test.demo.model.NutchasLine;
 import com.test.demo.service.CsvCombinerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.TreeMap;
@@ -19,11 +21,9 @@ public class WebController {
     @GetMapping("/")
     public String home2(Model model) throws IOException {
         TreeMap<String, NutchasLine> data = csvCombinerService.combineDeathSickCsv();
-        System.out.println(data);
         int totalConfirmedCases = data.values().stream().mapToInt(confirmed -> confirmed.getConfirmedCases()).sum();
         int totalDeath = data.values().stream().mapToInt(death -> death.getDeathsRecorded()).sum();
         int totalRecover = data.values().stream().mapToInt(recover -> recover.getRecovered()).sum();
-
 
         model.addAttribute("data", data);
         model.addAttribute("totalConfirmedCases",NutchasLine.formatNumber(totalConfirmedCases));
